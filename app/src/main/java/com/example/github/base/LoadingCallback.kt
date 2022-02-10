@@ -14,7 +14,7 @@ interface LoadingCallback {
 
     fun showError(@StringRes resId: Int)
 
-    fun showError(message: String)
+    fun showError(message: String?)
 
     fun isLoading(): Boolean
 }

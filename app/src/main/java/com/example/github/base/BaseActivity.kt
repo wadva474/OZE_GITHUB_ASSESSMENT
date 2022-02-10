@@ -24,7 +24,7 @@ abstract class BaseActivity : AppCompatActivity(), LoadingCallback{
         showError(getString(resId))
     }
 
-    override fun showError(message: String) {
+    override fun showError(message: String?) {
         hideKeyBoard()
         dismissLoading()
         MaterialDialog(this).show {

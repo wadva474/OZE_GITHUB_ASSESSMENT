@@ -3,11 +3,11 @@ package com.example.github.base
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.example.github.R
-import com.example.github.activity.MainActivity
+import com.example.github.ui.MainActivity
 
 abstract class BaseFragment : Fragment() {
 
-    private val mainActivity: MainActivity
+    protected val mainActivity: MainActivity
         get() {
             return activity as? MainActivity ?: throw IllegalStateException("Not attached!")
         }
