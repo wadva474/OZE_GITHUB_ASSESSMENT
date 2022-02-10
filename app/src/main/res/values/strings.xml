@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Github</string>
+    <string name="users">Users</string>
+    <string name="favourites">Favourites</string>
+    <string name="default_loading_message">Loading, Please wait . . .</string>
+    <string name="ok">OK</string>
+</resources>
