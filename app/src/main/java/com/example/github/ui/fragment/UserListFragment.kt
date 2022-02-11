@@ -5,9 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import com.example.github.R
 import com.example.github.base.BaseFragment
+import com.example.github.base.BaseViewModel
 import com.example.github.databinding.FragmentGithubUsersBinding
+import com.example.github.networkutils.LoadingStatus
 import com.example.github.ui.adapter.GitHubUserAdapter
 import com.example.github.ui.adapter.GitHubUserFooterStateAdapter
 import com.example.github.ui.viewmodel.UserListViewModel
@@ -18,6 +22,11 @@ class UserListFragment : BaseFragment() {
     private lateinit var binding: FragmentGithubUsersBinding
     private val viewModel: UserListViewModel by viewModels()
     private lateinit var userAdapter: GitHubUserAdapter
+
+
+    override fun getViewModel(): BaseViewModel {
+        return viewModel
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +39,13 @@ class UserListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userAdapter = GitHubUserAdapter()
+        userAdapter = GitHubUserAdapter(
+            addToFavorite = {
+                viewModel.saveUser(it)
+            }, viewMoreDetails = {
+                findNavController().navigate(UserListFragmentDirections.actionUserListFragmentToUserDetailsFragment(it))
+            }
+        )
         binding.userList.adapter = userAdapter.withLoadStateFooter(GitHubUserFooterStateAdapter {
             userAdapter.retry()
         })
@@ -48,8 +63,27 @@ class UserListFragment : BaseFragment() {
                 }
             }
         }
-        viewModel.githubUser.observe(viewLifecycleOwner) {
-            userAdapter.submitData(lifecycle, it)
+
+        observeViewModel()
+    }
+
+
+    private fun observeViewModel() {
+        viewModel.apply {
+            githubUser.observe(viewLifecycleOwner) {
+                userAdapter.submitData(lifecycle, it)
+            }
+            status.observe(viewLifecycleOwner){
+                when(it){
+                    is LoadingStatus.Success -> {
+                        showSnackBar(getString(R.string.added_to_favourites))
+                        getViewModel().errorShown()
+                    }
+                    is LoadingStatus.Error -> {
+                        mainActivity.showError(it.errorMessage)
+                    }
+                }
+            }
         }
     }
 

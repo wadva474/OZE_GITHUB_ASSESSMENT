@@ -2,16 +2,39 @@ package com.example.github.base
 
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.github.R
+import com.example.github.networkutils.LoadingStatus
 import com.example.github.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 abstract class BaseFragment : Fragment() {
+
 
     protected val mainActivity: MainActivity
         get() {
             return activity as? MainActivity ?: throw IllegalStateException("Not attached!")
         }
 
+
+    override fun onStart() {
+        super.onStart()
+        if (getViewModel().status.hasObservers()) return
+        getViewModel().status.observe(viewLifecycleOwner) {
+            when (it) {
+                LoadingStatus.Success -> {
+                    showSnackBar(getString(R.string.removed_from_favourites))
+                    getViewModel().errorShown()
+                }
+                is LoadingStatus.Error -> {
+                    mainActivity.showError(it.errorMessage)
+                    getViewModel().errorShown()
+                }
+            }
+        }
+    }
+
+    abstract fun getViewModel(): BaseViewModel
 
     fun showDialogWithAction(
         title: String? = null,

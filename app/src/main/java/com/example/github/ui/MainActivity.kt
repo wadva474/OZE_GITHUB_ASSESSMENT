@@ -7,12 +7,18 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.github.R
 import com.example.github.base.BaseActivity
 import com.example.github.databinding.ActivityMainBinding
+import com.example.github.extensions.setVisibilityState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val bottomNavVisibleDestinations = setOf(
+        R.id.favouriteFragment,
+        R.id.userListFragment
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +28,9 @@ class MainActivity : BaseActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNav.setVisibilityState(bottomNavVisibleDestinations.contains(destination.id))
+        }
     }
 
     override fun dismissLoading() = binding.progressIndicator.hide()

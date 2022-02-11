@@ -5,4 +5,10 @@
     <string name="default_loading_message">Loading, Please wait . . .</string>
     <string name="ok">OK</string>
     <string name="retry">retry</string>
+    <string name="delete_all">Delete All</string>
+    <string name="added_to_favourites">Successfully added to your favourites</string>
+    <string name="removed_from_favourites">Successfully removed from favourites</string>
+    <string name="github_url_format">url : %s</string>
+    <string name="html_url_format">Html Url : %s</string>
+    <string name="followers_url">followers url : %s</string>
 </resources>

@@ -2,10 +2,7 @@ package com.example.github.ui.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.rxjava2.cachedIn
 import com.example.github.base.BaseViewModel
 import com.example.github.local.model.GithubUser
 import com.example.github.networkutils.LoadingStatus
@@ -16,34 +13,48 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @HiltViewModel
-class UserListViewModel @Inject constructor(
-    private val githubUserRepository: GithubUserRepository
+class FavouriteViewModel @Inject constructor(
+    private val repository: GithubUserRepository
 ) : BaseViewModel() {
 
-    private val _githubUsers = MutableLiveData<PagingData<GithubUser>>()
-    val githubUser: LiveData<PagingData<GithubUser>> = _githubUsers
+
+    private val _githubUsers = MutableLiveData<List<GithubUser>>()
+    val githubUser: LiveData<List<GithubUser>> = _githubUsers
 
 
     init {
+        getAllUsers()
+    }
+
+
+    private fun getAllUsers() {
         compositeDisposable.add(
-            githubUserRepository.fetchGitHubUsers().cachedIn(viewModelScope).subscribe {
-                _githubUsers.value = it
+            repository.fetchAllUsers().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                    _githubUsers.value = it
             }
         )
     }
 
-    fun saveUser(githubUser: GithubUser) {
+
+    fun deleteAllUser() {
         compositeDisposable.add(
-            githubUserRepository.saveUser(githubUser)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+            repository.deleteAllUser().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe {
+
+                }
+        )
+
+    }
+
+    fun deleteUser(login: String) {
+        compositeDisposable.add(
+            repository.deleteUser(login).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe ({
                     _status.value = LoadingStatus.Success
                 }, {
                     _status.value = LoadingStatus.Error(it.message.toString())
                 })
         )
     }
-
-
 }

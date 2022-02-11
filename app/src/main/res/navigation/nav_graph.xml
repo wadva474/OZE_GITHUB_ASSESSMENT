@@ -9,5 +9,25 @@
         android:id="@+id/userListFragment"
         tools:layout="@layout/fragment_github_users"
         android:name="com.example.github.ui.fragment.UserListFragment"
-        android:label="UserListFragment" />
+        android:label="UserListFragment" >
+        <action
+            android:id="@+id/action_userListFragment_to_userDetailsFragment"
+            app:destination="@id/userDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.github.ui.fragment.FavouriteFragment"
+        android:label="FavouriteFragment" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_userDetailsFragment"
+            app:destination="@id/userDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="com.example.github.ui.fragment.UserDetailsFragment"
+        android:label="UserDetailsFragment" >
+        <argument
+            android:name="githubUser"
+            app:argType="com.example.github.local.model.GithubUser" />
+    </fragment>
 </navigation>
