@@ -13,7 +13,8 @@ import javax.inject.Singleton
 
 @Singleton
 class GithubUserPagingSource @Inject constructor(
-    private val githubService: GitHubService
+    private val githubService: GitHubService,
+    private val rxShedulers : RxSchedulers
 ) : RxPagingSource<Int, GithubUser>() {
     override fun getRefreshKey(state: PagingState<Int, GithubUser>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -26,7 +27,7 @@ class GithubUserPagingSource @Inject constructor(
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, GithubUser>> {
         val page = params.key ?: 1
         return githubService.fetchUsers("lagos", page)
-            .subscribeOn(Schedulers.io()).map {
+            .subscribeOn(rxShedulers.io()).map {
                 LoadResult.Page(
                     data = it.githubUsers.map { githubUser ->
                         githubUser.toDomain()

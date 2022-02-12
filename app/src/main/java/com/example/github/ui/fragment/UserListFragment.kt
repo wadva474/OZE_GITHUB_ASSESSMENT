@@ -39,6 +39,7 @@ class UserListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.fetchGithubUsers()
         userAdapter = GitHubUserAdapter(
             addToFavorite = {
                 viewModel.saveUser(it)

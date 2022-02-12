@@ -57,6 +57,7 @@ class FavouriteFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getAllUsers()
         adapter = GithubSaveUserAdapter(
             deleteFavorite = {
                 viewModel.deleteUser(it.login)
